@@ -110,7 +110,6 @@ export default function EditorPage() {
 
   const [title, setTitle] = useState(existingStory?.title || '');
   const [status, setStatus] = useState<StoryStatus>(existingStory?.status || 'draft');
-  const [targetDate, setTargetDate] = useState(existingStory?.targetDate || '');
   const [publishTime, setPublishTime] = useState(existingStory?.publishTime || '');
   const [folderId, setFolderId] = useState(existingStory?.folderId || folderIdParam || '');
 
@@ -129,6 +128,7 @@ export default function EditorPage() {
       }),
     ],
     content: existingStory?.content || '<p dir="rtl"></p>',
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class: 'prose prose-slate max-w-none focus:outline-none min-h-[500px] p-6 text-right',
@@ -147,7 +147,7 @@ export default function EditorPage() {
       title,
       content: editor?.getHTML() || '',
       status,
-      targetDate,
+      targetDate: '',
       publishTime,
       folderId,
     };
@@ -216,20 +216,20 @@ export default function EditorPage() {
             className="text-xl md:text-2xl font-bold text-slate-900 bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-slate-300 w-full md:w-96"
           />
         </div>
-        <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-3">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-start md:justify-end w-full md:w-auto gap-2">
+          <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
             <button
               onClick={handleExportWord}
-              className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-md transition-colors"
               title="تصدير كملف Word"
             >
-              <Download className="w-5 h-5" />
+              <Download className="w-4 h-4" />
             </button>
             <label
-              className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+              className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-md transition-colors cursor-pointer"
               title="استيراد ملف Word (.docx)"
             >
-              <Upload className="w-5 h-5" />
+              <Upload className="w-4 h-4" />
               <input type="file" accept=".docx" className="hidden" onChange={handleImportWord} />
             </label>
           </div>
@@ -237,7 +237,7 @@ export default function EditorPage() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as StoryStatus)}
-            className="bg-slate-100 border-none text-sm font-medium rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 w-full md:w-auto"
+            className="flex-1 md:flex-none bg-slate-100 border-none text-sm font-medium rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 min-w-[100px]"
           >
             <option value="draft">مسودة</option>
             <option value="ready">جاهز للنشر</option>
@@ -245,7 +245,7 @@ export default function EditorPage() {
           </select>
           <button
             onClick={handleSave}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-sm w-full md:w-auto shrink-0"
+            className="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-sm min-w-[90px]"
           >
             <Save className="w-4 h-4" />
             حفظ
@@ -280,16 +280,6 @@ export default function EditorPage() {
                   <option key={f.id} value={f.id}>{f.name}</option>
                 ))}
               </select>
-            </div>
-
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-2">تاريخ النشر المستهدف</label>
-              <input
-                type="date"
-                value={targetDate}
-                onChange={(e) => setTargetDate(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-              />
             </div>
 
             <div className="flex-1">
