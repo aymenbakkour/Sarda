@@ -55,9 +55,9 @@ export default function ContentManager() {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col md:flex-row h-full">
       {/* Folders Sidebar */}
-      <div className="w-80 bg-white border-l border-slate-200 flex flex-col h-full shrink-0">
+      <div className={`w-full md:w-80 bg-white border-b md:border-b-0 md:border-l border-slate-200 flex flex-col shrink-0 ${selectedFolder ? 'hidden md:flex' : 'flex h-full'}`}>
         <div className="p-4 border-b border-slate-200 flex items-center justify-between">
           <h2 className="font-bold text-lg text-slate-800">المجلدات</h2>
           <button
@@ -119,7 +119,7 @@ export default function ContentManager() {
                 </div>
               )}
 
-              <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -128,7 +128,7 @@ export default function ContentManager() {
                   }}
                   className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-indigo-50"
                 >
-                  <Edit2 className="w-3.5 h-3.5" />
+                  <Edit2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
                 </button>
                 <button
                   onClick={(e) => {
@@ -140,7 +140,7 @@ export default function ContentManager() {
                   }}
                   className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
                 </button>
               </div>
             </div>
@@ -149,17 +149,25 @@ export default function ContentManager() {
       </div>
 
       {/* Stories Area */}
-      <div className="flex-1 bg-slate-50 h-full overflow-y-auto">
+      <div className={`flex-1 bg-slate-50 h-full overflow-y-auto ${!selectedFolder ? 'hidden md:block' : 'block'}`}>
         {selectedFolder ? (
-          <div className="p-8 max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+          <div className="p-4 md:p-8 max-w-5xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <div>
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">{selectedFolder.name}</h1>
+                <div className="flex items-center gap-2 mb-2">
+                  <button 
+                    onClick={() => setSelectedFolderId(null)}
+                    className="md:hidden p-1 -mr-1 text-slate-500 hover:text-slate-900"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  </button>
+                  <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{selectedFolder.name}</h1>
+                </div>
                 <p className="text-slate-500">{folderStories.length} قصة</p>
               </div>
               <Link
                 href={`/editor/new?folderId=${selectedFolder.id}`}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors shadow-sm"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm w-full md:w-auto"
               >
                 <Plus className="w-5 h-5" />
                 قصة جديدة

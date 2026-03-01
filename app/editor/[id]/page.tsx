@@ -163,9 +163,9 @@ export default function EditorPage() {
   return (
     <div className="flex flex-col h-full bg-slate-50">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-4">
-          <Link href="/content" className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors">
+      <header className="bg-white border-b border-slate-200 px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center justify-between shrink-0 gap-4 md:gap-0">
+        <div className="flex items-center gap-2 md:gap-4 w-full md:w-auto">
+          <Link href="/content" className="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors shrink-0">
             <ArrowRight className="w-5 h-5" />
           </Link>
           <input
@@ -173,14 +173,14 @@ export default function EditorPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="عنوان القصة..."
-            className="text-2xl font-bold text-slate-900 bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-slate-300 w-96"
+            className="text-xl md:text-2xl font-bold text-slate-900 bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-slate-300 w-full md:w-96"
           />
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-3">
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as StoryStatus)}
-            className="bg-slate-100 border-none text-sm font-medium rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+            className="bg-slate-100 border-none text-sm font-medium rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 w-full md:w-auto"
           >
             <option value="draft">مسودة</option>
             <option value="ready">جاهز للنشر</option>
@@ -188,7 +188,7 @@ export default function EditorPage() {
           </select>
           <button
             onClick={handleSave}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors shadow-sm"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-sm w-full md:w-auto shrink-0"
           >
             <Save className="w-4 h-4" />
             حفظ
@@ -197,9 +197,9 @@ export default function EditorPage() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden flex">
+      <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
         {/* Editor Area */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 order-2 md:order-1">
           <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <MenuBar editor={editor} />
             <EditorContent editor={editor} />
@@ -207,11 +207,11 @@ export default function EditorPage() {
         </div>
 
         {/* Sidebar Settings */}
-        <div className="w-80 bg-white border-r border-slate-200 p-6 overflow-y-auto shrink-0">
-          <h3 className="font-bold text-slate-900 mb-6 text-lg">إعدادات النشر</h3>
+        <div className="w-full md:w-80 bg-white border-b md:border-b-0 md:border-r border-slate-200 p-4 md:p-6 overflow-y-auto shrink-0 order-1 md:order-2">
+          <h3 className="font-bold text-slate-900 mb-4 md:mb-6 text-lg">إعدادات النشر</h3>
           
-          <div className="space-y-6">
-            <div>
+          <div className="space-y-4 md:space-y-6 flex flex-col sm:flex-row md:flex-col gap-4 sm:gap-6 md:gap-0">
+            <div className="flex-1">
               <label className="block text-sm font-medium text-slate-700 mb-2">المجلد</label>
               <select
                 value={folderId}
@@ -225,7 +225,7 @@ export default function EditorPage() {
               </select>
             </div>
 
-            <div>
+            <div className="flex-1">
               <label className="block text-sm font-medium text-slate-700 mb-2">تاريخ النشر المستهدف</label>
               <input
                 type="date"
@@ -235,7 +235,7 @@ export default function EditorPage() {
               />
             </div>
 
-            <div>
+            <div className="flex-1">
               <label className="block text-sm font-medium text-slate-700 mb-2">وقت النشر</label>
               <input
                 type="time"
