@@ -244,8 +244,8 @@ export default function ContentManager() {
                       
                       <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                         <div className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{story.publishTime || '--:--'}</span>
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>{story.targetDate ? format(new Date(story.targetDate), 'dd MMM yyyy', { locale: ar }) : 'غير محدد'}</span>
                         </div>
                       </div>
                     </motion.div>

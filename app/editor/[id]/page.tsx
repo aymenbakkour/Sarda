@@ -110,7 +110,7 @@ export default function EditorPage() {
 
   const [title, setTitle] = useState(existingStory?.title || '');
   const [status, setStatus] = useState<StoryStatus>(existingStory?.status || 'draft');
-  const [publishTime, setPublishTime] = useState(existingStory?.publishTime || '');
+  const [targetDate, setTargetDate] = useState(existingStory?.targetDate || '');
   const [folderId, setFolderId] = useState(existingStory?.folderId || folderIdParam || '');
 
   useEffect(() => {
@@ -147,8 +147,8 @@ export default function EditorPage() {
       title,
       content: editor?.getHTML() || '',
       status,
-      targetDate: '',
-      publishTime,
+      targetDate,
+      publishTime: '',
       folderId,
     };
 
@@ -283,11 +283,11 @@ export default function EditorPage() {
             </div>
 
             <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-2">وقت النشر</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">تاريخ النشر</label>
               <input
-                type="time"
-                value={publishTime}
-                onChange={(e) => setPublishTime(e.target.value)}
+                type="date"
+                value={targetDate}
+                onChange={(e) => setTargetDate(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
               />
             </div>
