@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
 export default function ContentManager() {
-  const { folders, stories, addFolder, deleteFolder, updateFolder } = useStore();
+  const { folders, stories, addFolder, deleteFolder, updateFolder, deleteStory } = useStore();
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
@@ -204,12 +204,27 @@ export default function ContentManager() {
                           {getStatusText(story.status)}
                         </span>
                         
-                        <Link
-                          href={`/editor/${story.id}`}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Link>
+                        <div className="flex items-center gap-1">
+                          <Link
+                            href={`/editor/${story.id}`}
+                            className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
+                            title="تعديل"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Link>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (confirm('هل أنت متأكد من حذف هذه القصة؟')) {
+                                deleteStory(story.id);
+                              }
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                            title="حذف"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                       
                       <h3 className="text-xl font-bold text-slate-900 mb-2 line-clamp-2">

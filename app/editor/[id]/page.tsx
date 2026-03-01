@@ -6,8 +6,9 @@ import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
-import { Save, ArrowRight, Bold, Italic, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Heading1, Heading2, Heading3 } from 'lucide-react';
+import { Save, ArrowRight, Bold, Italic, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Heading1, Heading2, Heading3, Download, Upload } from 'lucide-react';
 import Link from 'next/link';
+import mammoth from 'mammoth';
 
 const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) {
@@ -160,6 +161,45 @@ export default function EditorPage() {
     }
   };
 
+  const handleExportWord = () => {
+    if (!editor) return;
+    
+    // Create a simple HTML document that MS Word can read
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body dir='rtl' style='font-family: Arial, sans-serif;'>";
+    const footer = "</body></html>";
+    const sourceHTML = header + editor.getHTML() + footer;
+    
+    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    const fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    fileDownload.href = source;
+    fileDownload.download = `${title || 'document'}.doc`;
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
+  };
+
+  const handleImportWord = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      if (editor) {
+        editor.commands.setContent(result.value);
+      }
+      if (!title) {
+        setTitle(file.name.replace(/\.[^/.]+$/, ""));
+      }
+    } catch (error) {
+      console.error("Error importing word document:", error);
+      alert("حدث خطأ أثناء استيراد الملف. تأكد من أنه بصيغة .docx");
+    }
+    
+    // Reset input
+    e.target.value = '';
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-50">
       {/* Header */}
@@ -177,6 +217,23 @@ export default function EditorPage() {
           />
         </div>
         <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExportWord}
+              className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              title="تصدير كملف Word"
+            >
+              <Download className="w-5 h-5" />
+            </button>
+            <label
+              className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+              title="استيراد ملف Word (.docx)"
+            >
+              <Upload className="w-5 h-5" />
+              <input type="file" accept=".docx" className="hidden" onChange={handleImportWord} />
+            </label>
+          </div>
+          <div className="w-px h-6 bg-slate-200 hidden md:block mx-1"></div>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as StoryStatus)}

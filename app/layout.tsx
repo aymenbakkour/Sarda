@@ -1,4 +1,4 @@
-import type {Metadata} from 'next';
+import type {Metadata, Viewport} from 'next';
 import { Tajawal } from 'next/font/google';
 import './globals.css'; // Global styles
 import Sidebar from '@/components/Sidebar';
@@ -12,6 +12,13 @@ const tajawal = Tajawal({
 export const metadata: Metadata = {
   title: 'سـردة - Sarda CMS',
   description: 'نظام متكامل لصناع المحتوى الصوتي والقصصي',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
