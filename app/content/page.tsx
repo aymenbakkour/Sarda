@@ -77,8 +77,13 @@ export default function ContentManager() {
                 autoFocus
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
-                onBlur={() => setIsAddingFolder(false)}
-                placeholder="اسم المجلد..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setIsAddingFolder(false);
+                    setNewFolderName('');
+                  }
+                }}
+                placeholder="اسم المجلد... (اضغط Enter للحفظ)"
                 className="w-full px-3 py-2 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
               />
             </form>
@@ -105,7 +110,11 @@ export default function ContentManager() {
                     autoFocus
                     value={editFolderName}
                     onChange={(e) => setEditFolderName(e.target.value)}
-                    onBlur={() => setEditingFolderId(null)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        setEditingFolderId(null);
+                      }
+                    }}
                     className="w-full px-2 py-1 border border-indigo-300 rounded focus:outline-none text-sm"
                     onClick={(e) => e.stopPropagation()}
                   />
