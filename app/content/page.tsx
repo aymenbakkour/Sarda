@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
-import { FolderPlus, Folder as FolderIcon, MoreVertical, Trash2, Edit2, FileText, Plus, Calendar, Clock, Search, LayoutGrid, AlignJustify } from 'lucide-react';
+import { FolderPlus, Folder as FolderIcon, MoreVertical, Trash2, Edit2, FileText, Plus, Calendar, Clock, Search, LayoutGrid, AlignJustify, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -16,6 +16,7 @@ export default function ContentManager() {
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editFolderName, setEditFolderName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'detailed' | 'compact'>('detailed');
 
   const handleAddFolder = (e: React.FormEvent) => {
@@ -38,7 +39,8 @@ export default function ContentManager() {
   const selectedFolder = folders.find(f => f.id === selectedFolderId);
   const folderStories = stories
     .filter(s => s.folderId === selectedFolderId)
-    .filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    .filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(s => statusFilter === 'all' || s.status === statusFilter);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -184,8 +186,8 @@ export default function ContentManager() {
                 <p className="text-slate-500">{folderStories.length} قصة</p>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <div className="relative w-full sm:w-64">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                  <div className="relative w-full sm:w-48 md:w-64">
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       type="text"
@@ -195,6 +197,21 @@ export default function ContentManager() {
                       className="w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
                     />
                   </div>
+                  
+                  <div className="relative flex-1 sm:flex-none">
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="w-full appearance-none bg-white border border-slate-200 rounded-lg pl-3 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-600"
+                    >
+                      <option value="all">جميع الحالات</option>
+                      <option value="draft">مسودة</option>
+                      <option value="ready">جاهز للنشر</option>
+                      <option value="published">منشور</option>
+                    </select>
+                    <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  </div>
+
                   <div className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shrink-0">
                     <button
                       onClick={() => setViewMode('detailed')}
