@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
-import { FolderPlus, Folder as FolderIcon, MoreVertical, Trash2, Edit2, FileText, Plus, Calendar, Clock } from 'lucide-react';
+import { FolderPlus, Folder as FolderIcon, MoreVertical, Trash2, Edit2, FileText, Plus, Calendar, Clock, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -15,6 +15,7 @@ export default function ContentManager() {
   const [newFolderName, setNewFolderName] = useState('');
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editFolderName, setEditFolderName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleAddFolder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +35,9 @@ export default function ContentManager() {
   };
 
   const selectedFolder = folders.find(f => f.id === selectedFolderId);
-  const folderStories = stories.filter(s => s.folderId === selectedFolderId);
+  const folderStories = stories
+    .filter(s => s.folderId === selectedFolderId)
+    .filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -174,13 +177,25 @@ export default function ContentManager() {
                 </div>
                 <p className="text-slate-500">{folderStories.length} قصة</p>
               </div>
-              <Link
-                href={`/editor/new?folderId=${selectedFolder.id}`}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm w-full md:w-auto"
-              >
-                <Plus className="w-5 h-5" />
-                قصة جديدة
-              </Link>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="ابحث في القصص..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                  />
+                </div>
+                <Link
+                  href={`/editor/new?folderId=${selectedFolder.id}`}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm w-full sm:w-auto"
+                >
+                  <Plus className="w-5 h-5" />
+                  قصة جديدة
+                </Link>
+              </div>
             </div>
 
             {folderStories.length === 0 ? (
