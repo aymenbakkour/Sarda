@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
-import { FolderPlus, Folder as FolderIcon, MoreVertical, Trash2, Edit2, FileText, Plus, Calendar, Clock, Search } from 'lucide-react';
+import { FolderPlus, Folder as FolderIcon, MoreVertical, Trash2, Edit2, FileText, Plus, Calendar, Clock, Search, LayoutGrid, AlignJustify } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -16,6 +16,7 @@ export default function ContentManager() {
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editFolderName, setEditFolderName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'detailed' | 'compact'>('detailed');
 
   const handleAddFolder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,7 +99,9 @@ export default function ContentManager() {
             </div>
           )}
 
-          {folders.map(folder => (
+          {folders.map(folder => {
+            const storyCount = stories.filter(s => s.folderId === folder.id).length;
+            return (
             <div
               key={folder.id}
               className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${
@@ -128,6 +131,9 @@ export default function ContentManager() {
                   <span className={`truncate text-sm font-medium ${selectedFolderId === folder.id ? 'text-indigo-900' : 'text-slate-700'}`}>
                     {folder.name}
                   </span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full mr-auto ${selectedFolderId === folder.id ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500'}`}>
+                    {storyCount}
+                  </span>
                 </div>
               )}
 
@@ -156,7 +162,7 @@ export default function ContentManager() {
                 </button>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
 
@@ -178,19 +184,37 @@ export default function ContentManager() {
                 <p className="text-slate-500">{folderStories.length} قصة</p>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="ابحث في القصص..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-                  />
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <div className="relative w-full sm:w-64">
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="ابحث في القصص..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                    />
+                  </div>
+                  <div className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shrink-0">
+                    <button
+                      onClick={() => setViewMode('detailed')}
+                      className={`p-1.5 rounded-md transition-colors ${viewMode === 'detailed' ? 'bg-indigo-50 text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                      title="عرض مفصل"
+                    >
+                      <LayoutGrid className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('compact')}
+                      className={`p-1.5 rounded-md transition-colors ${viewMode === 'compact' ? 'bg-indigo-50 text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                      title="عرض مدمج"
+                    >
+                      <AlignJustify className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 <Link
                   href={`/editor/new?folderId=${selectedFolder.id}`}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm w-full sm:w-auto"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-sm w-full sm:w-auto shrink-0"
                 >
                   <Plus className="w-5 h-5" />
                   قصة جديدة
@@ -211,7 +235,7 @@ export default function ContentManager() {
                   إنشاء قصة
                 </Link>
               </div>
-            ) : (
+            ) : viewMode === 'detailed' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <AnimatePresence>
                   {folderStories.map((story) => (
@@ -262,6 +286,46 @@ export default function ContentManager() {
                           <Calendar className="w-3.5 h-3.5" />
                           <span>{story.targetDate ? format(new Date(story.targetDate), 'dd MMM yyyy', { locale: ar }) : 'غير محدد'}</span>
                         </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <AnimatePresence>
+                  {folderStories.map((story) => (
+                    <motion.div
+                      key={story.id}
+                      layout
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 hover:border-indigo-300 transition-colors group flex items-center justify-between"
+                    >
+                      <Link href={`/editor/${story.id}`} className="flex-1 font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate">
+                        {story.title || 'بدون عنوان'}
+                      </Link>
+                      <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity mr-4 shrink-0">
+                        <Link
+                          href={`/editor/${story.id}`}
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
+                          title="تعديل"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (confirm('هل أنت متأكد من حذف هذه القصة؟')) {
+                              deleteStory(story.id);
+                            }
+                          }}
+                          className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                          title="حذف"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </motion.div>
                   ))}

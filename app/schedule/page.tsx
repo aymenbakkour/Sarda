@@ -45,7 +45,7 @@ export default function SchedulePlanner() {
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
           <div className="relative w-full sm:w-64">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
@@ -57,7 +57,7 @@ export default function SchedulePlanner() {
             />
           </div>
           
-          <div className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shrink-0">
+          <div className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shrink-0 w-full sm:w-auto justify-center sm:justify-start">
             <button
               onClick={() => setViewMode('detailed')}
               className={`p-1.5 rounded-md transition-colors ${viewMode === 'detailed' ? 'bg-indigo-50 text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
@@ -108,31 +108,31 @@ export default function SchedulePlanner() {
                   today ? 'bg-indigo-500' : isPast ? 'bg-slate-400' : 'bg-emerald-500'
                 }`} />
 
-                <div className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm border transition-shadow hover:shadow-md ${
-                  today ? 'border-indigo-200 ring-1 ring-indigo-50' : 'border-slate-200'
-                }`}>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 sm:p-3 rounded-xl ${today ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-500'}`}>
-                        <CalendarIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                {viewMode === 'detailed' ? (
+                  <div className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm border transition-shadow hover:shadow-md ${
+                    today ? 'border-indigo-200 ring-1 ring-indigo-50' : 'border-slate-200'
+                  }`}>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 sm:p-3 rounded-xl ${today ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-500'}`}>
+                          <CalendarIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                        </div>
+                        <div>
+                          <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                            {format(date, 'EEEE، d MMMM yyyy', { locale: ar })}
+                          </h3>
+                          {today && <span className="text-indigo-600 text-sm font-medium">اليوم</span>}
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-base sm:text-lg font-bold text-slate-900">
-                          {format(date, 'EEEE، d MMMM yyyy', { locale: ar })}
-                        </h3>
-                        {today && <span className="text-indigo-600 text-sm font-medium">اليوم</span>}
-                      </div>
+                      {getStatusBadge(story.status)}
                     </div>
-                    {getStatusBadge(story.status)}
-                  </div>
 
-                  <Link href={`/editor/${story.id}`} className="block group">
-                    <div className={`bg-slate-50 rounded-xl border border-slate-100 group-hover:border-indigo-200 transition-colors ${viewMode === 'compact' ? 'p-3' : 'p-4'}`}>
-                      <h4 className={`font-bold text-slate-800 group-hover:text-indigo-600 transition-colors ${viewMode === 'compact' ? 'text-base' : 'text-xl mb-2'}`}>
-                        {story.title || 'بدون عنوان'}
-                      </h4>
-                      
-                      {viewMode === 'detailed' && (
+                    <Link href={`/editor/${story.id}`} className="block group">
+                      <div className="bg-slate-50 rounded-xl border border-slate-100 group-hover:border-indigo-200 transition-colors p-4">
+                        <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors text-xl mb-2">
+                          {story.title || 'بدون عنوان'}
+                        </h4>
+                        
                         <div className="flex items-center gap-4 text-sm text-slate-500">
                           <div className="flex items-center gap-1.5">
                             <FileText className="w-4 h-4" />
@@ -145,10 +145,16 @@ export default function SchedulePlanner() {
                             </div>
                           )}
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    </Link>
+                  </div>
+                ) : (
+                  <Link href={`/editor/${story.id}`} className={`block bg-white rounded-xl p-4 shadow-sm border transition-colors hover:border-indigo-300 ${
+                    today ? 'border-indigo-200 ring-1 ring-indigo-50' : 'border-slate-200'
+                  }`}>
+                    <h4 className="font-bold text-slate-800 truncate">{story.title || 'بدون عنوان'}</h4>
                   </Link>
-                </div>
+                )}
               </motion.div>
             );
           })}
